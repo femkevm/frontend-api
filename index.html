@@ -1,0 +1,136 @@
+<html>
+<head>
+    <script defer src="https://unpkg.com/alpinejs@3.5.0/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class=" navbar-brand" href="#">Project API development Femke Van Mechelen: Rode Duivels</a>
+    
+  </nav>
+  <h2 class="text-center mt-5 mb-5">Maak een speler aan:</h2>
+  <div x-data="{
+    responsedata: null,
+    playernumber: null,
+    firstname: null,
+    lastname: null,
+    async callmethod1() {
+        this.responsedata = await (await fetch('https://useritem-api-service-femkevanmechelen.cloud.okteto.net/Players/', 
+        {
+            method: 'POST',
+            body: JSON.stringify({
+               
+                playernumber: this.playernumber,
+                firstname: this.firstname,
+                lastname: this.lastname,
+                
+             
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })).json();
+
+        console.log(this.responsedata);
+    },
+}">
+    
+    <p class="text-center"><strong>ID: </strong> <strong x-text="responsedata.id"></strong></p>
+    
+  <div class="d-flex flex-column">
+    <div class="d-flex justify-content-center">
+    <p class="mr-2"><strong>Spelernummer: </strong></p>
+    <input class="mb-4" type="number" x-model="playernumber">
+    </div>
+
+  </div>
+  <div class="d-flex flex-column">
+    <div  class="d-flex justify-content-center">
+    <p class="mr-4 ml-3"><strong>Voornaam: </strong></p>
+    <input class="mb-4" type="text" x-model="firstname">
+    </div>
+  </div>
+  <div class="d-flex flex-column">
+    <div class="d-flex justify-content-center">
+    <p class="mr-4 ml-1"><strong>Achternaam: </strong></p>
+    <input class="mb-4" type="text" x-model="lastname">
+    </div>
+  </div>
+  <div  class="col-md-12 text-center pb-5">
+    <button class="text-center" x-on:click="callmethod1">Maak speler</button>
+  </div>
+<hr>
+
+</div>
+<h2 class="text-center pt-5 pb-5">Lijst van spelers:</h2>
+    <div
+      x-cloak
+      x-data="{players: [], 'isLoading': true}"
+      x-init="fetch('https://useritem-api-service-femkevanmechelen.cloud.okteto.net/Players/')
+      .then(response => response.json())
+      .then(response => { players = response; isLoading = false; console.log(response);})"
+    >
+      <h1 x-show="isLoading">Loading...</h1>
+      <table class="table table-striped" >
+        <tr>
+          <th scope="col-sm">Spelernummer</th>
+          <th scope="col-sm">Voornaam</th>
+          <th scope="col-sm">Achternaam</th>
+          <th scope="col-sm">id</th>
+        
+        </tr>
+
+        <template x-for="player in players" :key="player.playernumber">
+          <tr>
+            <td scope="row"  x-text="player.playernumber"></td>
+            <td  x-text="player.firstname"></td>
+            <td  x-text="player.lastname"></td>
+            <td  x-text="player.id"></td>
+           
+          </tr>
+        </template>
+      </table>
+      <hr>
+
+      
+    </div>
+    <h2 class="text-center pt-5 pb-5">Posts van de spelers:</h2>
+    <div class="mb-5"
+      x-cloak
+      x-data="{posts: [], 'isLoading': true}"
+      x-init="fetch('https://useritem-api-service-femkevanmechelen.cloud.okteto.net/posts/')
+      .then(response => response.json())
+      .then(response => { posts = response; isLoading = false; console.log(response);})"
+    >
+      <h1 x-show="isLoading">Loading...</h1>
+      <table class="table table-striped" >
+        <tr>
+          <th scope="col-sm">Huidige club</th>
+          <th scope="col-sm">Leeftijd</th>
+          <th scope="col-sm">Positie</th>
+          <th scope="col-sm">owner_id</th>
+        
+        
+        </tr>
+
+        <template x-for="post in posts" :key="post.currentclub">
+          <tr>
+            <td  x-text="post.currentclub"></td>
+            <td  x-text="post.age"></td>
+            <td  x-text="post.position"></td>
+            <td  x-text="post.owner_id"></td>
+    
+           
+          </tr>
+        </template>
+      </table>
+    </div>
+
+   
+   
+
+</body>
+</html>
